@@ -151,5 +151,5 @@ points = shield.mesh.vertices - d * shield.mesh.vertex_normals
 # This is the equivalent surface current in the shield that would cause its
 # scalar magnetic potential to be constant
 shield.s = StreamFunction(
-    np.linalg.solve(shield.U_coupling(points), coil.U_coupling(points) @ coil.s), shield
+    np.linalg.solve(shield.U_coupling(points), coil.U_coupling(points) @ coil.s, dtype='uint8'), shield
 )
