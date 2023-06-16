@@ -22,7 +22,8 @@ target_points = np.array([x, y, z]).T
 target_points = (
     target_points[np.linalg.norm(target_points, axis=1) < sidelength / 2] + center
 )
-
+l=4
+m=2
 target_field = np.zeros(target_points.shape)
 
 i=0
@@ -44,7 +45,7 @@ for point in target_points:
         else:
             phi=np.arctan(b/a)+np.pi
 
-    sph=ylm(3, 2, theta, phi) #ylm(l , m, theta, phi)
+    sph=ylm(l, m, theta, phi)
     r_hat=(point[0]/radius, point[1]/radius, point[2]/radius)
     target_field[i]=sph*r_hat
     #target_field[i]=Wlm(1, 0, theta, phi)
