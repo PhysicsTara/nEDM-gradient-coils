@@ -153,3 +153,37 @@ points = shield.mesh.vertices - d * shield.mesh.vertex_normals
 shield.s = StreamFunction(
     np.linalg.solve(shield.U_coupling(points), coil.U_coupling(points) @ coil.s, dtype='uint8'), shield
 )
+shield.coupling = np.linalg.solve(shield.U_coupling(points), coil.U_coupling(points))
+
+secondary_C = shield.B_coupling(target_points) @ shield.coupling
+
+total_C = coil.B_coupling(target_points) + secondary_C
+
+target_spec_w_shield = {
+    "coupling": total_C,
+    "rel_error": 0,
+    "abs_error": target_abs_error,
+    "target": target_field,
+}
+
+
+coil.s2, coil.prob2 = optimize_streamfunctions(
+    coil,
+    [target_spec_w_shield],
+    objective="minimum_inductive_energy",
+    solver="MOSEK",
+    solver_opts={"mosek_params": {mosek.iparam.num_threads: 8}},
+)
+loops = scalar_contour(coil.mesh, coil.s2.vert, N_contours=10)
+
+f = mlab.figure(None, bgcolor=(1, 1, 1), fgcolor=(0.5, 0.5, 0.5), size=(800, 800))
+mlab.clf()
+
+plot_3d_current_loops(loops, colors="auto", figure=f)
+
+B_target2 = total_C @ coil.s2
+mlab.quiver3d(*target_points.T, *B_target2.T, mode="arrow", scale_factor=0.75)
+
+
+f.scene.isometric_view()
+f.scene.camera.zoom(0.95)
