@@ -129,8 +129,8 @@ for point in target_points:
     i+=1
 
 target_abs_error = np.zeros_like(target_field)
-target_abs_error[:, 0] += 0.5
-target_abs_error[:, 1:3] += 0.5
+target_abs_error[:, 0] += 0.05
+target_abs_error[:, 1:3] += 0.05
 
 target_spec = {
     "coupling": coil.B_coupling(target_points),
